@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+      <title></title>
+      <meta charset="utf-8"/>
+  <link href="https://img3.doubanio.com/f/movie/2c95f768ea74284b900c04c0209b0a44f0a0de52/css/movie/top_movies.css" rel="stylesheet" type="text/css" />
+  <body>
+      <div style="margin-top: 100px;margin-left: 520px;">
+          <form action="http://localhost:5000/result" method=get style="margin: auto 0;">
+              请输入电影名称：<br/>
+             <input type="text" id="search-text" name="q">&nbsp;<input id="search_submit" type="submit"  value="搜索"/>
+              <div style="background-color: azure; position: absolute"><b><span id='search-result' style="color: black"></span></b></div>
+         </form>
+     </div>
+
+      <div  style="position: relative">
+      {% if ok %}
+          <ol style="margin-left: 300px; margin-right: 400px; margin-top: 30px" class="grid_view">
+              {% for movie in movies %}
+              <li>
+            <div class="item">
+                <div class="pic">
+                    <em class="" style="color: darkorange">*</em>
+                    <a href="https://movie.douban.com/subject/{{movie[0]}}/">
+                        <img width="100" alt="{{movie[1]}}" src="{{movie[9]}}" class="">
+                    </a>
+                </div>
+                <div class="info">
+                    <div class="hd">
+                        <a href="https://movie.douban.com/subject/1292052/" class="">
+                            <span class="title">{{movie[1]}}</span>
+                        </a>
+                    </div>
+                    <div class="bd">
+                        <p class="">
+                            导演: {{movie[2]}}&nbsp;&nbsp;&nbsp;主演: {{movie[3]}}<br>
+                            年份：{{movie[4]}}&nbsp;/&nbsp;国家：{{movie[5]}}&nbsp;/&nbsp;分类：{{movie[6]}}
+                        </p>
+                        <div class="star">
+                                <span class="rating5-t"></span>
+                            <span class="rating_num" property="v:average">评分：<em style="color: darkorange">{{movie[7]}}</em></span>
+                        </div>
+                            <p class="quote">
+                                <span class="inq">“{{movie[8]}}”</span>
+                            </p>
+                    </div>
+                </div>
+            </div>
+        </li>
+              {% endfor %}
+          </ol>
+      {% else %}
+          <script>
+            alert("请输入搜索关键字！")
+          </script>
+      {% endif %}
+      </div>
+
+ <script src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
+ <script>
+     $(document).ready(function(){
+         $("#search-text").keyup(function(){
+             var q = $("#search-text").val();
+             $.post("/Fsearch/",{'q':q}, function(data){
+                 for (var i = 0; i < data.length;) {
+                     var item = "";
+                     for(; i < data.length; i++){
+                         if(data[i] != "," && data[i] != "\""){
+                             item = item + data[i]
+                         }else{
+                             i++
+                             break
+                         }
+                     }
+                     $('#search-result').append(item + "<br>")
+                 };
+             })
+         });
+         $('#search-text').keydown(function(){
+             $('#search-result').empty();
+         })
+         $('#search-text').blur(function(){
+             $('#search-result').empty();
+         })
+     });
+ </script>
+ </body>
+ </html>
